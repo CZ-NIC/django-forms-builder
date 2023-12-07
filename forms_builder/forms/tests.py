@@ -1,18 +1,15 @@
-from __future__ import unicode_literals
-
-from django.utils.safestring import SafeText
 from django.conf import settings
-from django.contrib.auth.models import User, AnonymousUser
+from django.contrib.auth.models import AnonymousUser, User
 from django.contrib.sites.models import Site
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import Context, RequestContext, Template
 from django.test import TestCase
+from django.utils.safestring import SafeText
 
-from forms_builder.forms.fields import NAMES, FILE, SELECT
+from forms_builder.forms.fields import FILE, NAMES, SELECT
 from forms_builder.forms.forms import FormForForm
-from forms_builder.forms.models import (Form, Field,
-                                        STATUS_DRAFT, STATUS_PUBLISHED)
+from forms_builder.forms.models import STATUS_DRAFT, STATUS_PUBLISHED, Field, Form
 from forms_builder.forms.settings import USE_SITES
 from forms_builder.forms.signals import form_invalid, form_valid
 
@@ -23,10 +20,7 @@ class Tests(TestCase):
         self._site = Site.objects.get_current()
 
     def test_form_fields(self):
-        """
-        Simple 200 status check against rendering and posting to forms with
-        both optional and required fields.
-        """
+        """Simple 200 status check against rendering and posting to forms with both optional and required fields."""
         for required in (True, False):
             form = Form.objects.create(title="Test", status=STATUS_PUBLISHED)
             if USE_SITES:
@@ -38,15 +32,13 @@ class Tests(TestCase):
             response = self.client.get(form.get_absolute_url())
             self.assertEqual(response.status_code, 200)
             fields = form.fields.visible()
-            data = dict([(f.slug, "test") for f in fields])
+            data = {f.slug: "test" for f in fields}
             response = self.client.post(form.get_absolute_url(), data=data)
             self.assertEqual(response.status_code, 200)
 
     def test_draft_form(self):
-        """
-        Test that a form with draft status is only visible to staff.
-        """
-        settings.DEBUG = True # Don't depend on having a 404 template.
+        """Test that a form with draft status is only visible to staff."""
+        settings.DEBUG = True  # Don't depend on having a 404 template.
         username = "test"
         password = "test"
         User.objects.create_superuser(username, "", password)
@@ -62,13 +54,11 @@ class Tests(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_form_signals(self):
-        """
-        Test that each of the signals are sent.
-        """
+        """Test that each of the signals are sent."""
         events = ["valid", "invalid"]
-        invalid = lambda **kwargs: events.remove("invalid")
+        invalid = lambda **kwargs: events.remove("invalid")  # noqa: E731
         form_invalid.connect(invalid)
-        valid = lambda **kwargs: events.remove("valid")
+        valid = lambda **kwargs: events.remove("valid")  # noqa: E731
         form_valid.connect(valid)
         form = Form.objects.create(title="Signals", status=STATUS_PUBLISHED)
         if USE_SITES:
@@ -82,12 +72,9 @@ class Tests(TestCase):
         self.assertEqual(len(events), 0)
 
     def test_tag(self):
-        """
-        Test that the different formats for the ``render_built_form``
-        tag all work.
-        """
+        """Test that the different formats for the ``render_built_form`` tag all work."""
         form = Form.objects.create(title="Tags", status=STATUS_PUBLISHED)
-        request = type(str(""), (), {"META": {}, "user": AnonymousUser()})()
+        request = type("", (), {"META": {}, "user": AnonymousUser()})()
         context = RequestContext(request, {"form": form})
         template = "{%% load forms_builder_tags %%}{%% render_built_form %s %%}"
         formats = ("form", "form=form", "id=form.id", "slug=form.slug")
@@ -100,10 +87,11 @@ class Tests(TestCase):
         if USE_SITES:
             form.sites.add(self._site)
         form.save()
-        form.fields.create(label="file field",
-                field_type=FILE,
-                required=False,
-                visible=True)
+        form.fields.create(
+            label="file field",
+            field_type=FILE,
+            required=False,
+            visible=True)
         fields = form.fields.visible()
         data = {'field_%s' % fields[0].id: ''}
         context = Context({})
@@ -112,16 +100,13 @@ class Tests(TestCase):
         # may not be NULL
         form_for_form.save()
 
-
     def test_field_validate_slug_names(self):
         form = Form.objects.create(title="Test")
-        field = Field(form=form,
-                label="First name", field_type=NAMES[0][0])
+        field = Field(form=form, label="First name", field_type=NAMES[0][0])
         field.save()
         self.assertEqual(field.slug, 'first_name')
 
-        field_2 = Field(form=form,
-                label="First name", field_type=NAMES[0][0])
+        field_2 = Field(form=form, label="First name", field_type=NAMES[0][0])
         try:
             field_2.save()
         except IntegrityError:
@@ -130,21 +115,17 @@ class Tests(TestCase):
     def test_field_validate_slug_length(self):
         max_slug_length = 2000
         form = Form.objects.create(title="Test")
-        field = Field(form=form,
-                      label='x' * (max_slug_length + 1), field_type=NAMES[0][0])
+        field = Field(form=form, label='x' * (max_slug_length + 1), field_type=NAMES[0][0])
         field.save()
         self.assertLessEqual(len(field.slug), max_slug_length)
 
     def test_field_default_ordering(self):
         form = Form.objects.create(title="Test")
-        form.fields.create(label="second field",
-                field_type=NAMES[0][0], order=2)
-        f1 = form.fields.create(label="first field",
-                field_type=NAMES[0][0], order=1)
+        form.fields.create(label="second field", field_type=NAMES[0][0], order=2)
+        f1 = form.fields.create(label="first field", field_type=NAMES[0][0], order=1)
         self.assertEqual(form.fields.all()[0], f1)
 
     def test_form_errors(self):
-        from future.builtins import str
         form = Form.objects.create(title="Test")
         if USE_SITES:
             form.sites.add(self._site)

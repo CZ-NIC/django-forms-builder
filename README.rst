@@ -1,7 +1,7 @@
 |Project continuation|
 
-django-forms-builder
-====================
+django-forms-builder (cod)
+==========================
 
 Created by `Stephen McDonald <http://twitter.com/stephen_mcd>`_
 
@@ -14,11 +14,11 @@ available in the admin via filterable reporting with CSV/XLS export.
 
 Form builder:
 
-.. image:: https://raw.githubusercontent.com/stephenmcd/django-forms-builder/master/docs/img/fields.png
+.. image:: https://raw.githubusercontent.com/CZ-NIC/django-forms-builder/master/docs/img/fields.png
 
 Data reporting:
 
-.. image:: https://raw.githubusercontent.com/stephenmcd/django-forms-builder/master/docs/img/report.png
+.. image:: https://raw.githubusercontent.com/CZ-NIC/django-forms-builder/master/docs/img/report.png
 
 
 HTML5 Features
@@ -74,8 +74,6 @@ is in the ``TEMPLATE_CONTEXT_PROCESSORS`` setting in your project's
     TEMPLATE_CONTEXT_PROCESSORS = (
         # other context processors
         "django.core.context_processors.request",
-        # Django 1.6 also needs:
-        'django.contrib.auth.context_processors.auth',
     )
 
 Then add ``forms_builder.forms.urls`` to your project's ``urls``
@@ -225,7 +223,7 @@ in their code.
 Email Templates
 ===============
 
-The `django-email-extras`_ package is used to send multipart email
+The function ``send_mail_template`` is used to send multipart email
 notifications using Django's templating system for constructing the
 emails, to users submitting forms, and any recipients specified when
 creating a form via Django's admin.
@@ -240,13 +238,6 @@ are used as the templates for emailing any extra recipients specified
 for the form in the admin interface. By default they simply extend
 the ``form_response`` templates, but you can modify them should you
 need to customize the emails sent to any extra recipients.
-
-.. note::
-
-    With ``django-email-extras`` installed, it's also possible to
-    configure `PGP`_ encrypted emails to be send to staff members,
-    allowing forms to be built for capturing sensitive information.
-    Consult the `django-email-extras`_ documentation for more info.
 
 
 Signals
@@ -309,11 +300,29 @@ by installing the `xlwt`_ package:
   $ pip install xlwt
 
 
+COD - Continuation of the development
+=====================================
+
+Last commit to the `original repository`_ was 18. 9. 2018. Therefore, development continues here until the original
+authors resume activity.
+
+Run example
+===========
+
+The project includes an example. However, it is located outside the module and is not part of the installation package.
+Download the example from the repository. You can run it with the ``make`` command.
+
+.. code-block:: bash
+
+    git clone https://github.com/CZ-NIC/django-forms-builder
+    make prepare-example
+    make run-example
+
+
 .. _`pip`: http://www.pip-installer.org/
 .. _`South`: http://south.aeracode.org/
-.. _`django-email-extras`: https://github.com/stephenmcd/django-email-extras
-.. _`PGP`: http://en.wikipedia.org/wiki/Pretty_Good_Privacy
 .. _`xlwt`: http://www.python-excel.org/
 .. |Project continuation| image:: https://img.shields.io/badge/Continuation-Django_Forms_Builder-blue
     :target: https://github.com/CZ-NIC/django-forms-builder
     :alt: Continuation of the unmaintained project "Django Forms builder"
+.. _`original repository`: https://github.com/stephenmcd/django-forms-builder

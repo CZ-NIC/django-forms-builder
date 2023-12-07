@@ -1,0 +1,298 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-12-06 12:56+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: cs\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
+
+#, python-format
+msgid "1 entry deleted"
+msgid_plural "%(count)s entries deleted"
+msgstr[0] "smazána %(count)s položka"
+msgstr[1] "smazány %(count)s položky"
+msgstr[2] "smazáno %(count)s položek"
+
+msgid "All"
+msgstr "Vše"
+
+msgid "An alternate URL to redirect to after form submission"
+msgstr "Jiná URL pro přesměrování po odeslání formuláře"
+
+msgid "Back to form"
+msgstr "Zpět na formulář"
+
+msgid "Button text"
+msgstr "Text tlačítka"
+
+msgid "Check box"
+msgstr "Zaškrtávací políčko"
+
+msgid "Check boxes"
+msgstr "Zaškrtávací políčka"
+
+msgid "Checked"
+msgstr "Zaškrtnuto"
+
+msgid "Choices"
+msgstr "Možnosti volby"
+
+msgid "Contains"
+msgstr "Obsahuje"
+
+msgid "Contains all"
+msgstr "Obsahuje všechny"
+
+msgid "Contains any"
+msgstr "Obsahuje jakýkoli"
+
+msgid "Date"
+msgstr "Datum"
+
+msgid "Date of birth"
+msgstr "Datum narození"
+
+msgid "Date/time"
+msgstr "Datum/čas"
+
+msgid "Default value"
+msgstr "Výchozí hodnota"
+
+msgid "Delete selected"
+msgstr "Smazat vybrané"
+
+msgid "Delete selected entries?"
+msgstr "Smazat vybrané položky?"
+
+msgid "Doesn't contain"
+msgstr "Neobsahuje"
+
+msgid "Doesn't contain all"
+msgstr "Neobsahuje všechny"
+
+msgid "Doesn't contain any"
+msgstr "Neobsahuje žádné"
+
+msgid "Doesn't equal"
+msgstr "Nerovná se"
+
+msgid "Doesn't equal any"
+msgstr "Nerovná se žádnému"
+
+msgid "Draft"
+msgstr "Návrh"
+
+msgid "Drop down"
+msgstr "Rozbalovací seznam"
+
+msgid "Email"
+msgstr "E-mail"
+
+msgid "Entries"
+msgstr "Položky"
+
+msgid "Equals"
+msgstr "Rovná se"
+
+msgid "Equals any"
+msgstr "Rovná se jakémukoli"
+
+msgid "Expires on"
+msgstr "Platnost končí dne"
+
+msgid "Export CSV"
+msgstr "Export do CSV"
+
+msgid "Export XLS"
+msgstr "Export do XLS"
+
+msgid "Export all entries"
+msgstr "Exportovat všechny položky"
+
+msgid "Field"
+msgstr "Pole"
+
+msgid "Fields"
+msgstr "Pole"
+
+msgid "File upload"
+msgstr "Nahrání souboru"
+
+msgid "Filter by"
+msgstr "Filtrovat podle"
+
+msgid "Filter entries"
+msgstr "Filtrovat položky"
+
+msgid "Form"
+msgstr "Formulář"
+
+msgid "Form entries"
+msgstr "Položky formuláře"
+
+msgid "Form entry"
+msgstr "Položka formuláře"
+
+msgid "Form field entries"
+msgstr "Položky polí formuláře"
+
+msgid "Form field entry"
+msgstr "Položka pole formuláře"
+
+msgid "Forms"
+msgstr "Formuláře"
+
+msgid "From address"
+msgstr "Adresa formuláře"
+
+msgid "Help text"
+msgstr "Nápověda"
+
+msgid "Hidden"
+msgstr "Skrytý"
+
+msgid "Home"
+msgstr "Domů"
+
+msgid "If checked, only logged in users can view the form"
+msgstr "Je-li zatrženo, jen přihlášení uživatelé mohou vidět tento formulář"
+
+msgid "If checked, the person entering the form will be sent an email"
+msgstr "Pokud je zaškrtnuto, osobě zadávající formulář bude zaslán e-mail"
+
+msgid "Include"
+msgstr "Vložit"
+
+msgid "Intro"
+msgstr "Úvod"
+
+msgid "Is between"
+msgstr "Je mezi"
+
+msgid "Label"
+msgstr "Označení"
+
+msgid "Login required"
+msgstr "Přihlášení je povinné"
+
+msgid "Message"
+msgstr "Zpráva"
+
+msgid "Multi line text"
+msgstr "Víceřádkový text"
+
+msgid "Multi select"
+msgstr "Vícenásobný výběr"
+
+msgid "No entries selected"
+msgstr "Nebyly vybrány žádné položky"
+
+msgid "No entries to display"
+msgstr "Žádné položky pro zobrazení"
+
+msgid "Not checked"
+msgstr "Nezaškrtnuto"
+
+msgid "Nothing"
+msgstr "Nic"
+
+msgid "Number"
+msgstr "Číslo"
+
+msgid "One or more email addresses, separated by commas"
+msgstr "Jeden nebo více e-mailů, oddělených čárkou"
+
+msgid "Order"
+msgstr "Pořadí"
+
+msgid "Placeholder Text"
+msgstr "Zástupný text"
+
+msgid "Published"
+msgstr "Zveřejněno"
+
+msgid "Published from"
+msgstr "Zveřejnit od"
+
+msgid "Radio buttons"
+msgstr "Přepínací tlačítka"
+
+msgid "Redirect url"
+msgstr "Přesměrovat na URL"
+
+msgid "Required"
+msgstr "Povinné"
+
+msgid "Response"
+msgstr "Odpověď"
+
+msgid "Send copies to"
+msgstr "Poslat kopie na"
+
+msgid "Send email"
+msgstr "Poslat e-mail"
+
+msgid "Single line text"
+msgstr "Jednořádkový text"
+
+msgid "Sites"
+msgstr "Weby"
+
+msgid "Slug"
+msgstr "Slug"
+
+msgid "Status"
+msgstr "Stav"
+
+msgid "Subject"
+msgstr "Předmět"
+
+msgid "Submit"
+msgstr "Odeslat"
+
+msgid "The address the email will be sent from"
+msgstr "Adresa, ze které bude e-mail odeslán"
+
+msgid "Title"
+msgstr "Název"
+
+msgid "Type"
+msgstr "Typ"
+
+msgid "URL"
+msgstr "URL"
+
+msgid "View Entries"
+msgstr "Zobrazit záznamy"
+
+msgid "View all entries"
+msgstr "Zobrazit všechny položky"
+
+msgid "View entries"
+msgstr "Zobrazit položky"
+
+msgid "View form on site"
+msgstr "Zobrazit formulář na webu"
+
+msgid "Visible"
+msgstr "Viditelné"
+
+msgid "With published selected, won't be shown after this time"
+msgstr "S přepínačem Zveřejněno, bude zobrazeno jen do této doby"
+
+msgid "With published selected, won't be shown until this time"
+msgstr "S přepínačem Zveřejněno, bude zobrazeno od této doby"
+
+msgid "and"
+msgstr "a"

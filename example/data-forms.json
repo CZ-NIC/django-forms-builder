@@ -1,0 +1,86 @@
+[
+{
+  "model": "sites.site",
+  "fields": {
+    "domain": "example.com",
+    "name": "example.com"
+  }
+},
+{
+  "model": "forms.form",
+  "pk": 1,
+  "fields": {
+    "title": "Example",
+    "slug": "example",
+    "intro": "Example of Django form builder.",
+    "button_text": "Submit",
+    "response": "Thank you for submitting the form.",
+    "redirect_url": null,
+    "status": 2,
+    "publish_date": null,
+    "expiry_date": null,
+    "login_required": false,
+    "send_email": false,
+    "email_from": "",
+    "email_copies": "",
+    "email_subject": "",
+    "email_message": "",
+    "sites": [
+      [
+        "example.com"
+      ]
+    ]
+  }
+},
+{
+  "model": "forms.field",
+  "pk": 1,
+  "fields": {
+    "label": "First name",
+    "slug": "first_name",
+    "field_type": 1,
+    "required": true,
+    "visible": true,
+    "choices": "",
+    "default": "",
+    "placeholder_text": "Type your first name.",
+    "help_text": "",
+    "form": 1,
+    "order": 0
+  }
+},
+{
+  "model": "forms.field",
+  "pk": 2,
+  "fields": {
+    "label": "Last name",
+    "slug": "last_name",
+    "field_type": 1,
+    "required": true,
+    "visible": true,
+    "choices": "",
+    "default": "",
+    "placeholder_text": "Type your family name.",
+    "help_text": "",
+    "form": 1,
+    "order": 1
+  }
+},
+{
+  "model": "forms.field",
+  "pk": 3,
+  "fields": {
+    "label": "E-mail",
+    "slug": "e_mail",
+    "field_type": 3,
+    "required": true,
+    "visible": true,
+    "choices": "",
+    "default": "",
+    "placeholder_text": "Type your e-mail.",
+    "help_text": "",
+    "form": 1,
+    "order": 2
+  }
+}
+]

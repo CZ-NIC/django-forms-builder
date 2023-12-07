@@ -1,31 +1,23 @@
-from __future__ import absolute_import, unicode_literals
-
-import os, sys
+import os
 
 
 DEBUG = True
 SITE_ID = 1
-PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
-PROJECT_DIRNAME = PROJECT_ROOT.split(os.sep)[-1]
+EXAMPLE_ROOT = os.path.dirname(os.path.abspath(__file__))
+PROJECT_DIRNAME = EXAMPLE_ROOT.split(os.sep)[-1]
 STATIC_URL = "/static/"
-STATIC_ROOT = os.path.join(PROJECT_ROOT, STATIC_URL.strip("/"))
-MEDIA_URL = STATIC_URL + "media/"
-MEDIA_ROOT = os.path.join(PROJECT_ROOT, *MEDIA_URL.strip("/").split("/"))
-ADMIN_MEDIA_PREFIX = STATIC_URL + "admin/"
 ROOT_URLCONF = "%s.urls" % PROJECT_DIRNAME
-TEMPLATE_DIRS = (os.path.join(PROJECT_ROOT, "templates"),)
 SECRET_KEY = "asdfa4wtW#$Gse4aGdfs"
-ADMINS = ()
 
-
-MANAGERS = ADMINS
-if "test" not in sys.argv:
-    LOGIN_URL = "/admin/"
+if 'TOX_WORK_DIR' in os.environ:
+    DATABASE_FILEPATH = os.path.join(os.environ['TOX_WORK_DIR'], 'tests.db')
+else:
+    DATABASE_FILEPATH = os.path.join(EXAMPLE_ROOT, 'dev.db')
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'dev.db',
+        'NAME': DATABASE_FILEPATH,
     }
 }
 
@@ -33,7 +25,7 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
-            os.path.join(PROJECT_ROOT, "templates")
+            os.path.join(EXAMPLE_ROOT, "templates")
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -58,8 +50,6 @@ MIDDLEWARE = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
 )
-# For Django 1.8 compatibility
-MIDDLEWARE_CLASSES = MIDDLEWARE
 
 TEMPLATE_CONTEXT_PROCESSORS = (
     "django.contrib.auth.context_processors.auth",
@@ -85,10 +75,5 @@ INSTALLED_APPS = (
 FORMS_BUILDER_EXTRA_FIELDS = (
     (100, "django.forms.BooleanField", "My cool checkbox"),
 )
-
-try:
-    from local_settings import *
-except ImportError:
-    pass
 
 TEMPLATE_DEBUG = DEBUG

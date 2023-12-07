@@ -1,25 +1,19 @@
-from __future__ import unicode_literals
-
 import json
 from urllib.parse import quote
 
 from django.conf import settings
 from django.contrib.auth import REDIRECT_FIELD_NAME
-try:
-    from django.urls import reverse
-except ImportError:
-    # For Django 1.8 compatibility
-    from django.core.urlresolvers import reverse
-from django.http import HttpResponse, HttpResponseBadRequest
+from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template import RequestContext
+from django.urls import reverse
 from django.views.generic.base import TemplateView
 
 from forms_builder.forms.forms import FormForForm
 from forms_builder.forms.models import Form
 from forms_builder.forms.settings import EMAIL_FAIL_SILENTLY
 from forms_builder.forms.signals import form_invalid, form_valid
-from forms_builder.forms.utils import split_choices, send_mail_template
+from forms_builder.forms.utils import send_mail_template, split_choices
 
 
 class FormDetail(TemplateView):
@@ -27,7 +21,7 @@ class FormDetail(TemplateView):
     template_name = "forms/form_detail.html"
 
     def get_context_data(self, **kwargs):
-        context = super(FormDetail, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         published = Form.objects.published(for_user=self.request.user)
         context["form"] = get_object_or_404(published, slug=kwargs["slug"])
         return context
@@ -59,33 +53,27 @@ class FormDetail(TemplateView):
             entry = form_for_form.save()
             form_valid.send(sender=request, form=form_for_form, entry=entry)
             self.send_emails(request, form_for_form, form, entry, attachments)
-            # XXX: is_ajax() is deprecated since Django 3.1, removed in Django 4.0
-            # https://docs.djangoproject.com/en/3.1/releases/3.1/#id2
-            if not self.request.is_ajax():
-                return redirect(form.redirect_url or
-                    reverse("form_sent", kwargs={"slug": form.slug}))
+            if not is_ajax(self.request):
+                return redirect(form.redirect_url or reverse("form_sent", kwargs={"slug": form.slug}))
         context = {"form": form, "form_for_form": form_for_form}
         return self.render_to_response(context)
 
     def render_to_response(self, context, **kwargs):
-        # XXX: is_ajax() is deprecated since Django 3.1, removed in Django 4.0
-        # https://docs.djangoproject.com/en/3.1/releases/3.1/#id2
-        if self.request.method == "POST" and self.request.is_ajax():
+        if self.request.method == "POST" and is_ajax(self.request):
             json_context = json.dumps({
                 "errors": context["form_for_form"].errors,
                 "form": context["form_for_form"].as_p(),
                 "message": context["form"].response,
             })
             if context["form_for_form"].errors:
-                return HttpResponseBadRequest(json_context,
-                    content_type="application/json")
+                return HttpResponseBadRequest(json_context, content_type="application/json")
             return HttpResponse(json_context, content_type="application/json")
-        return super(FormDetail, self).render_to_response(context, **kwargs)
+        return super().render_to_response(context, **kwargs)
 
     def send_emails(self, request, form_for_form, form, entry, attachments):
         subject = form.email_subject
         if not subject:
-            subject = "%s - %s" % (form.title, entry.entry_time)
+            subject = "{} - {}".format(form.title, entry.entry_time)
         fields = []
         for (k, v) in form_for_form.fields.items():
             value = form_for_form.cleaned_data[k]
@@ -114,13 +102,17 @@ class FormDetail(TemplateView):
                                fail_silently=EMAIL_FAIL_SILENTLY,
                                headers=headers)
 
+
 form_detail = FormDetail.as_view()
 
 
 def form_sent(request, slug, template="forms/form_sent.html"):
-    """
-    Show the response message.
-    """
+    """Show the response message."""
     published = Form.objects.published(for_user=request.user)
     context = {"form": get_object_or_404(published, slug=slug)}
     return render(request, template, context, RequestContext(request))
+
+
+def is_ajax(request: HttpRequest) -> bool:
+    """Check if request is Ajax type."""
+    return request.headers.get('x-requested-with') == 'XMLHttpRequest'

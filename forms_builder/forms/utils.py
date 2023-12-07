@@ -1,35 +1,18 @@
-from __future__ import unicode_literals
+from importlib import import_module
 
 from django.core.mail import EmailMultiAlternatives
 from django.template.defaultfilters import slugify as django_slugify
-from importlib import import_module
-
 from django.template.loader import render_to_string
 from unidecode import unidecode
 
 
-# Timezone support with fallback.
-try:
-    from django.utils.timezone import now
-except ImportError:
-    from datetime import datetime
-    now = datetime.now
-
-
 def slugify(s):
-    """
-    Translates unicode into closest possible ascii chars before
-    slugifying.
-    """
-    from future.builtins import str
+    """Translate unicode into closest possible ascii chars before slugifying."""
     return django_slugify(unidecode(str(s)))
 
 
 def unique_slug(manager, slug_field, slug):
-    """
-    Ensure slug is unique for the given manager, appending a digit
-    if it isn't.
-    """
+    """Ensure slug is unique for the given manager, appending a digit if it isn't."""
     max_length = manager.model._meta.get_field(slug_field).max_length
     slug = slug[:max_length]
     i = 0
@@ -39,7 +22,7 @@ def unique_slug(manager, slug_field, slug):
                 slug = slug.rsplit("-", 1)[0]
             # We need to keep the slug length under the slug fields max length. We need to
             # account for the length that is added by adding a random integer and `-`.
-            slug = "%s-%s" % (slug[:max_length - len(str(i)) - 1], i)
+            slug = "{}-{}".format(slug[:max_length - len(str(i)) - 1], i)
         if not manager.filter(**{slug_field: slug}):
             break
         i += 1
@@ -47,22 +30,24 @@ def unique_slug(manager, slug_field, slug):
 
 
 def split_choices(choices_string):
-    """
-    Convert a comma separated choices string to a list.
-    """
+    """Convert a comma separated choices string to a list."""
     return [x.strip() for x in choices_string.split(",") if x.strip()]
 
 
 def html5_field(name, base):
     """
+    Return object base with input_type attribude.
+
     Takes a Django form field class and returns a subclass of
     it with the given name as its input type.
     """
-    return type(str(""), (base,), {"input_type": name})
+    return type("", (base,), {"input_type": name})
 
 
 def import_attr(path):
     """
+    Import attribute from path.
+
     Given a a Python dotted path to a variable in a module,
     imports the module and returns the variable in it.
     """
