@@ -1,17 +1,13 @@
 from django.contrib.sites.models import Site
-from django.utils.html import format_html_join
-from django.utils.timezone import now
-
 from django.db import models
 from django.db.models import Q
 from django.urls import reverse
+from django.utils.html import format_html_join
+from django.utils.timezone import now
 from django.utils.translation import gettext_lazy as _
-from future.builtins import str
 
-from forms_builder.forms import fields
-from forms_builder.forms import settings
+from forms_builder.forms import fields, settings
 from forms_builder.forms.utils import slugify, unique_slug
-
 
 STATUS_DRAFT = 1
 STATUS_PUBLISHED = 2
@@ -22,9 +18,8 @@ STATUS_CHOICES = (
 
 
 class FormManager(models.Manager):
-    """
-    Only show published forms for non-staff users.
-    """
+    """Only show published forms for non-staff users."""
+
     def published(self, for_user=None):
         if for_user is not None and for_user.is_staff:
             return self.all()
@@ -47,38 +42,30 @@ class FormManager(models.Manager):
 ######################################################################
 
 class AbstractForm(models.Model):
-    """
-    A user-built form.
-    """
+    """A user-built form."""
 
-    sites = models.ManyToManyField(Site,
-        default=[settings.SITE_ID], related_name="%(app_label)s_%(class)s_forms")
+    sites = models.ManyToManyField(Site, default=[settings.SITE_ID], related_name="%(app_label)s_%(class)s_forms")
     title = models.CharField(_("Title"), max_length=50)
-    slug = models.SlugField(_("Slug"), editable=settings.EDITABLE_SLUGS,
-        max_length=100, unique=True)
+    slug = models.SlugField(_("Slug"), editable=settings.EDITABLE_SLUGS, max_length=100, unique=True)
     intro = models.TextField(_("Intro"), blank=True)
-    button_text = models.CharField(_("Button text"), max_length=50,
-        default=_("Submit"))
+    button_text = models.CharField(_("Button text"), max_length=50, default=_("Submit"))
     response = models.TextField(_("Response"), blank=True)
-    redirect_url = models.CharField(_("Redirect url"), max_length=200,
-        null=True, blank=True,
-        help_text=_("An alternate URL to redirect to after form submission"))
-    status = models.IntegerField(_("Status"), choices=STATUS_CHOICES,
-        default=STATUS_PUBLISHED)
-    publish_date = models.DateTimeField(_("Published from"),
-        help_text=_("With published selected, won't be shown until this time"),
+    redirect_url = models.CharField(_("Redirect url"), max_length=200, null=True, blank=True,
+                                    help_text=_("An alternate URL to redirect to after form submission"))
+    status = models.IntegerField(_("Status"), choices=STATUS_CHOICES, default=STATUS_PUBLISHED)
+    publish_date = models.DateTimeField(
+        _("Published from"), help_text=_("With published selected, won't be shown until this time"),
         blank=True, null=True)
-    expiry_date = models.DateTimeField(_("Expires on"),
-        help_text=_("With published selected, won't be shown after this time"),
-        blank=True, null=True)
+    expiry_date = models.DateTimeField(
+        _("Expires on"), help_text=_("With published selected, won't be shown after this time"), blank=True, null=True)
     login_required = models.BooleanField(_("Login required"), default=False,
-        help_text=_("If checked, only logged in users can view the form"))
-    send_email = models.BooleanField(_("Send email"), default=True, help_text=
-        _("If checked, the person entering the form will be sent an email"))
+                                         help_text=_("If checked, only logged in users can view the form"))
+    send_email = models.BooleanField(_("Send email"), default=True,
+                                     help_text=_("If checked, the person entering the form will be sent an email"))
     email_from = models.EmailField(_("From address"), blank=True,
-        help_text=_("The address the email will be sent from"))
-    email_copies = models.CharField(_("Send copies to"), blank=True,
-        help_text=_("One or more email addresses, separated by commas"),
+                                   help_text=_("The address the email will be sent from"))
+    email_copies = models.CharField(
+        _("Send copies to"), blank=True, help_text=_("One or more email addresses, separated by commas"),
         max_length=200)
     email_subject = models.CharField(_("Subject"), max_length=200, blank=True)
     email_message = models.TextField(_("Message"), blank=True)
@@ -94,10 +81,7 @@ class AbstractForm(models.Model):
         return str(self.title)
 
     def save(self, *args, **kwargs):
-        """
-        Create a unique slug from title - append an index and increment if it
-        already exists.
-        """
+        """Create a unique slug from title - append an index and increment if it already exists."""
         if not self.slug:
             slug = slugify(self)
             self.slug = unique_slug(self.__class__.objects, "slug", slug)
@@ -105,6 +89,8 @@ class AbstractForm(models.Model):
 
     def published(self, for_user=None):
         """
+        Check if form is published.
+
         Mimics the queryset logic in ``FormManager.published``, so we
         can check a form is published when it wasn't loaded via the
         queryset's ``published`` method, and is passed to the
@@ -121,11 +107,12 @@ class AbstractForm(models.Model):
 
     def total_entries(self):
         """
-        Called by the admin list view where the queryset is annotated
-        with the number of entries.
+        Get total entries.
+
+        Called by the admin list view where the queryset is annotated with the number of entries.
         """
         return self.total_entries
-    total_entries.admin_order_field = "total_entries"
+    total_entries.admin_order_field = "total_entries"  # type: ignore
 
     def get_absolute_url(self):
         return reverse("form_detail", kwargs={"slug": self.slug})
@@ -141,33 +128,28 @@ class AbstractForm(models.Model):
 
 
 class FieldManager(models.Manager):
-    """
-    Only show visible fields when displaying actual form..
-    """
+    """Only show visible fields when displaying actual form.."""
+
     def visible(self):
         return self.filter(visible=True)
 
 
 class AbstractField(models.Model):
-    """
-    A field for a user-built form.
-    """
+    """A field for a user-built form."""
 
     label = models.CharField(_("Label"), max_length=settings.LABEL_MAX_LENGTH)
-    slug = models.SlugField(_('Slug'), max_length=2000, blank=True,
-            default="")
+    slug = models.SlugField(_('Slug'), max_length=2000, blank=True, default="")
     field_type = models.IntegerField(_("Type"), choices=fields.NAMES)
     required = models.BooleanField(_("Required"), default=True)
     visible = models.BooleanField(_("Visible"), default=True)
-    choices = models.CharField(_("Choices"), max_length=settings.CHOICES_MAX_LENGTH, blank=True,
+    choices = models.CharField(
+        _("Choices"), max_length=settings.CHOICES_MAX_LENGTH, blank=True,
         help_text="Comma separated options where applicable. If an option "
-            "itself contains commas, surround the option starting with the %s"
-            "character and ending with the %s character." %
-                (settings.CHOICES_QUOTE, settings.CHOICES_UNQUOTE))
-    default = models.CharField(_("Default value"), blank=True,
-        max_length=settings.FIELD_MAX_LENGTH)
-    placeholder_text = models.CharField(_("Placeholder Text"), null=True,
-        blank=True, max_length=100, editable=settings.USE_HTML5)
+        "itself contains commas, surround the option starting with the %s"
+        "character and ending with the %s character." % (settings.CHOICES_QUOTE, settings.CHOICES_UNQUOTE))
+    default = models.CharField(_("Default value"), blank=True, max_length=settings.FIELD_MAX_LENGTH)
+    placeholder_text = models.CharField(_("Placeholder Text"), null=True, blank=True, max_length=100,
+                                        editable=settings.USE_HTML5)
     help_text = models.CharField(_("Help text"), blank=True, max_length=settings.HELPTEXT_MAX_LENGTH)
 
     objects = FieldManager()
@@ -182,6 +164,8 @@ class AbstractField(models.Model):
 
     def get_choices(self):
         """
+        Parse a comma separated choice string into a list of choices.
+
         Parse a comma separated choice string into a list of choices taking
         into account quoted choices using the ``settings.CHOICES_QUOTE`` and
         ``settings.CHOICES_UNQUOTE`` settings.
@@ -206,15 +190,15 @@ class AbstractField(models.Model):
 
     def is_a(self, *args):
         """
+        Check if field_type is in args.
+
         Helper that returns True if the field's type is given in any arg.
         """
         return self.field_type in args
 
 
 class AbstractFormEntry(models.Model):
-    """
-    An entry submitted via a user-built form.
-    """
+    """An entry submitted via a user-built form."""
 
     entry_time = models.DateTimeField(_("Date/time"))
 
@@ -225,13 +209,10 @@ class AbstractFormEntry(models.Model):
 
 
 class AbstractFieldEntry(models.Model):
-    """
-    A single field value for a form entry submitted via a user-built form.
-    """
+    """A single field value for a form entry submitted via a user-built form."""
 
     field_id = models.IntegerField()
-    value = models.CharField(max_length=settings.FIELD_MAX_LENGTH,
-            null=True)
+    value = models.CharField(max_length=settings.FIELD_MAX_LENGTH, null=True)
 
     class Meta:
         verbose_name = _("Form field entry")
@@ -258,9 +239,7 @@ class Form(AbstractForm):
 
 
 class Field(AbstractField):
-    """
-    Implements automated field ordering.
-    """
+    """Implement automated field ordering."""
 
     form = models.ForeignKey("Form", related_name="fields", on_delete=models.CASCADE)
     order = models.IntegerField(_("Order"), null=True, blank=True)

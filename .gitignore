@@ -1,12 +1,4 @@
-*.pyc
+__pycache__/
 *.pyc
 *.pyo
-*.db
-.DS_Store
-.coverage
-.idea/
-local_settings.py
-*.egg-info
-build/
-dist/
-forms_builder/example_project/static/
+*.mo

@@ -1,4 +1,3 @@
-include LICENSE
-include README.rst
-recursive-include forms_builder *
-recursive-exclude */example_project/static *
+graft forms_builder/forms/templates
+graft forms_builder/forms/locale
+prune example

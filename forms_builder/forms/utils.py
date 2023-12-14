@@ -1,25 +1,18 @@
-from django.core.mail import EmailMultiAlternatives
-from django.template.defaultfilters import slugify as django_slugify
 from importlib import import_module
 
+from django.core.mail import EmailMultiAlternatives
+from django.template.defaultfilters import slugify as django_slugify
 from django.template.loader import render_to_string
 from unidecode import unidecode
 
 
 def slugify(s):
-    """
-    Translates unicode into closest possible ascii chars before
-    slugifying.
-    """
-    from future.builtins import str
+    """Translate unicode into closest possible ascii chars before slugifying."""
     return django_slugify(unidecode(str(s)))
 
 
 def unique_slug(manager, slug_field, slug):
-    """
-    Ensure slug is unique for the given manager, appending a digit
-    if it isn't.
-    """
+    """Ensure slug is unique for the given manager, appending a digit if it isn't."""
     max_length = manager.model._meta.get_field(slug_field).max_length
     slug = slug[:max_length]
     i = 0
@@ -37,14 +30,14 @@ def unique_slug(manager, slug_field, slug):
 
 
 def split_choices(choices_string):
-    """
-    Convert a comma separated choices string to a list.
-    """
+    """Convert a comma separated choices string to a list."""
     return [x.strip() for x in choices_string.split(",") if x.strip()]
 
 
 def html5_field(name, base):
     """
+    Return object base with input_type attribude.
+
     Takes a Django form field class and returns a subclass of
     it with the given name as its input type.
     """
@@ -53,6 +46,8 @@ def html5_field(name, base):
 
 def import_attr(path):
     """
+    Import attribute from path.
+
     Given a a Python dotted path to a variable in a module,
     imports the module and returns the variable in it.
     """

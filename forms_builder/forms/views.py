@@ -13,7 +13,7 @@ from forms_builder.forms.forms import FormForForm
 from forms_builder.forms.models import Form
 from forms_builder.forms.settings import EMAIL_FAIL_SILENTLY
 from forms_builder.forms.signals import form_invalid, form_valid
-from forms_builder.forms.utils import split_choices, send_mail_template
+from forms_builder.forms.utils import send_mail_template, split_choices
 
 
 class FormDetail(TemplateView):
@@ -54,8 +54,7 @@ class FormDetail(TemplateView):
             form_valid.send(sender=request, form=form_for_form, entry=entry)
             self.send_emails(request, form_for_form, form, entry, attachments)
             if not is_ajax(self.request):
-                return redirect(form.redirect_url or
-                    reverse("form_sent", kwargs={"slug": form.slug}))
+                return redirect(form.redirect_url or reverse("form_sent", kwargs={"slug": form.slug}))
         context = {"form": form, "form_for_form": form_for_form}
         return self.render_to_response(context)
 
@@ -67,8 +66,7 @@ class FormDetail(TemplateView):
                 "message": context["form"].response,
             })
             if context["form_for_form"].errors:
-                return HttpResponseBadRequest(json_context,
-                    content_type="application/json")
+                return HttpResponseBadRequest(json_context, content_type="application/json")
             return HttpResponse(json_context, content_type="application/json")
         return super().render_to_response(context, **kwargs)
 
@@ -104,13 +102,12 @@ class FormDetail(TemplateView):
                                fail_silently=EMAIL_FAIL_SILENTLY,
                                headers=headers)
 
+
 form_detail = FormDetail.as_view()
 
 
 def form_sent(request, slug, template="forms/form_sent.html"):
-    """
-    Show the response message.
-    """
+    """Show the response message."""
     published = Form.objects.published(for_user=request.user)
     context = {"form": get_object_or_404(published, slug=slug)}
     return render(request, template, context, RequestContext(request))

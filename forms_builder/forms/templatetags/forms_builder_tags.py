@@ -1,11 +1,8 @@
-from future.builtins import str
-
 from django import template
 from django.template.loader import get_template
 
 from forms_builder.forms.forms import FormForForm
-from forms_builder.forms.models import Form, AbstractForm
-
+from forms_builder.forms.models import AbstractForm, Form
 
 register = template.Library()
 
@@ -42,6 +39,8 @@ class BuiltFormNode(template.Node):
 @register.tag
 def render_built_form(parser, token):
     """
+    Render form.
+
     render_build_form takes one argument in one of the following formats:
 
     {% render_build_form form_instance %}
@@ -58,6 +57,5 @@ def render_built_form(parser, token):
         if name not in ("form", "id", "slug"):
             raise ValueError
     except ValueError:
-        e = ()
         raise template.TemplateSyntaxError(render_built_form.__doc__)
     return BuiltFormNode(name, value)

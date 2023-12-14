@@ -1,5 +1,3 @@
-from future.builtins import int, range, str
-
 from datetime import date, datetime
 from os.path import join, split
 from uuid import uuid4
@@ -10,13 +8,12 @@ from django.forms import SelectDateWidget
 from django.template import Template
 from django.urls import reverse
 from django.utils.safestring import mark_safe
+from django.utils.timezone import now
 from django.utils.translation import gettext_lazy as _
 
-from forms_builder.forms import fields
-from forms_builder.forms.models import FormEntry, FieldEntry
-from forms_builder.forms import settings
-from forms_builder.forms.utils import now, split_choices
-
+from forms_builder.forms import fields, settings
+from forms_builder.forms.models import FieldEntry, FormEntry
+from forms_builder.forms.utils import split_choices
 
 fs = default_storage
 if settings.UPLOAD_ROOT is not None:
@@ -124,6 +121,8 @@ class FormForForm(forms.ModelForm):
 
     def __init__(self, form, context, *args, **kwargs):
         """
+        Init FormForForm.
+
         Dynamically add each of the form fields for the given form model
         instance and its related field model instances.
         """
@@ -211,6 +210,8 @@ class FormForForm(forms.ModelForm):
 
     def save(self, **kwargs):
         """
+        Save form.
+
         Get/create a FormEntry instance and assign submitted values to
         related FieldEntry instances for each form field.
         """
@@ -239,9 +240,7 @@ class FormForForm(forms.ModelForm):
         return entry
 
     def email_to(self):
-        """
-        Return the value entered for the first field of type EmailField.
-        """
+        """Return the value entered for the first field of type EmailField."""
         for field in self.form_fields:
             if field.is_a(fields.EMAIL):
                 return self.cleaned_data[field.slug]
@@ -250,6 +249,8 @@ class FormForForm(forms.ModelForm):
 
 class EntriesForm(forms.Form):
     """
+    Entries Form.
+
     Form with a set of fields dynamically assigned that can be used to
     filter entries for the given ``forms.models.Form`` instance.
     """
@@ -257,6 +258,8 @@ class EntriesForm(forms.Form):
     def __init__(self, form, request, formentry_model=FormEntry,
                  fieldentry_model=FieldEntry, *args, **kwargs):
         """
+        Init EntriesForm.
+
         Iterate through the fields of the ``forms.models.Form`` instance and
         create the form fields required to control including the field in
         the export (with a checkbox) or filtering the field which differs
@@ -283,7 +286,8 @@ class EntriesForm(forms.Form):
                     choices = ((True, _("Checked")), (False, _("Not checked")))
                 else:
                     choices = field.get_choices()
-                contains_field = forms.MultipleChoiceField(label=" ",
+                contains_field = forms.MultipleChoiceField(
+                    label=" ",
                     choices=choices, widget=forms.CheckboxSelectMultiple(),
                     required=False)
                 self.fields["%s_filter" % field_key] = choice_filter_field
@@ -291,7 +295,8 @@ class EntriesForm(forms.Form):
             elif field.is_a(*fields.MULTIPLE):
                 # A fixed set of choices to filter by, with multiple
                 # possible values in the entry field.
-                contains_field = forms.MultipleChoiceField(label=" ",
+                contains_field = forms.MultipleChoiceField(
+                    label=" ",
                     choices=field.get_choices(),
                     widget=forms.CheckboxSelectMultiple(),
                     required=False)
@@ -321,9 +326,7 @@ class EntriesForm(forms.Form):
             label=_("and"), widget=SelectDateWidget(), required=False)
 
     def __iter__(self):
-        """
-        Yield pairs of include checkbox / filters for each field.
-        """
+        """Yield pairs of include checkbox / filters for each field."""
         for field_id in [f.id for f in self.form_fields] + [0]:
             prefix = "field_%s_" % field_id
             fields = [f for f in super(EntriesForm, self).__iter__()
@@ -332,6 +335,8 @@ class EntriesForm(forms.Form):
 
     def posted_data(self, field):
         """
+        Post data wrapper.
+
         Wrapper for self.cleaned_data that returns True on
         field_id_export fields when the form hasn't been posted to,
         to facilitate show/export URLs that export all entries without
@@ -343,9 +348,7 @@ class EntriesForm(forms.Form):
             return field.endswith("_export")
 
     def columns(self):
-        """
-        Returns the list of selected column names.
-        """
+        """Return the list of selected column names."""
         fields = [f.label for f in self.form_fields
                   if self.posted_data("field_%s_export" % f.id)]
         if self.posted_data("field_0_export"):
@@ -353,10 +356,7 @@ class EntriesForm(forms.Form):
         return fields
 
     def rows(self, csv=False):
-        """
-        Returns each row based on the selected criteria.
-        """
-
+        """Return each row based on the selected criteria."""
         # Store the index of each field against its ID for building each
         # entry row with columns in the correct order. Also store the IDs of
         # fields with a type of FileField or Date-like for special handling of
@@ -379,8 +379,7 @@ class EntriesForm(forms.Form):
         # Get the field entries for the given form and filter by entry_time
         # if specified.
         model = self.fieldentry_model
-        field_entries = model.objects.filter(entry__form=self.form
-            ).order_by("-entry__id").select_related("entry")
+        field_entries = model.objects.filter(entry__form=self.form).order_by("-entry__id").select_related("entry")
         if self.posted_data("field_0_filter") == FILTER_CHOICE_BETWEEN:
             time_from = self.posted_data("field_0_from")
             time_to = self.posted_data("field_0_to")

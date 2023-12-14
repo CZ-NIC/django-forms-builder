@@ -1,15 +1,10 @@
-from django.core.exceptions import ImproperlyConfigured
 from django import forms
-try:
-    from django.forms import SelectDateWidget
-except ImportError:
-    # For Django 1.8 compatibility
-    from django.forms.extras import SelectDateWidget
+from django.core.exceptions import ImproperlyConfigured
+from django.forms import SelectDateWidget
 from django.utils.translation import gettext_lazy as _
 
-from forms_builder.forms.settings import USE_HTML5, EXTRA_FIELDS, EXTRA_WIDGETS
+from forms_builder.forms.settings import EXTRA_FIELDS, EXTRA_WIDGETS, USE_HTML5
 from forms_builder.forms.utils import html5_field, import_attr
-
 
 # Constants for all available field types.
 TEXT = 1
@@ -29,7 +24,7 @@ URL = 14
 DOB = 15
 
 # Names for all available field types.
-NAMES = (
+NAMES = [
     (TEXT, _("Single line text")),
     (TEXTAREA, _("Multi line text")),
     (EMAIL, _("Email")),
@@ -45,7 +40,7 @@ NAMES = (
     (DATE_TIME, _("Date/time")),
     (DOB, _("Date of birth")),
     (HIDDEN, _("Hidden")),
-)
+]
 
 # Field classes for all available field types.
 CLASSES = {
@@ -98,7 +93,7 @@ for field_id, field_path, field_name in EXTRA_FIELDS:
         err = "ID %s for field %s in FORMS_EXTRA_FIELDS already exists"
         raise ImproperlyConfigured(err % (field_id, field_name))
     CLASSES[field_id] = import_attr(field_path)
-    NAMES += ((field_id, _(field_name)),)
+    NAMES.append((field_id, _(field_name)))
 
 # Add/update custom widgets.
 for field_id, widget_path in EXTRA_WIDGETS:
