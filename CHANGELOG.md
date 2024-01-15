@@ -32,7 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 - Support of Python < 3.9.
-- Support of Django < 3.
+- Support of Django < 3.2.
 - Compiled translations in .mo files.
 
 
