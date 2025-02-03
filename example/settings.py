@@ -77,3 +77,5 @@ FORMS_BUILDER_EXTRA_FIELDS = (
 )
 
 TEMPLATE_DEBUG = DEBUG
+
+DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
