@@ -9,6 +9,10 @@ STATIC_URL = "/static/"
 ROOT_URLCONF = "%s.urls" % PROJECT_DIRNAME
 SECRET_KEY = "asdfa4wtW#$Gse4aGdfs"
 
+USE_TZ = True
+
+DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
+
 if 'TOX_WORK_DIR' in os.environ:
     DATABASE_FILEPATH = os.path.join(os.environ['TOX_WORK_DIR'], 'tests.db')
 else:
@@ -77,5 +81,3 @@ FORMS_BUILDER_EXTRA_FIELDS = (
 )
 
 TEMPLATE_DEBUG = DEBUG
-
-DEFAULT_AUTO_FIELD = "django.db.models.AutoField"

@@ -2,9 +2,10 @@ from datetime import date, datetime
 from os.path import join, split
 from uuid import uuid4
 
+import django
 from django import forms
 from django.core.files.storage import default_storage
-from django.forms import SelectDateWidget
+from django.forms import SelectDateWidget, URLField
 from django.template import Template
 from django.urls import reverse
 from django.utils.safestring import mark_safe
@@ -182,6 +183,9 @@ class FormForForm(forms.ModelForm):
                 if field.field_type == fields.CHECKBOX:
                     initial_val = initial_val != "False"
                 self.initial[field_key] = initial_val
+            if django.VERSION >= (5, 0):
+                if issubclass(field_class, URLField):
+                    field_args["assume_scheme"] = "https"
             self.fields[field_key] = field_class(**field_args)
 
             if field.field_type == fields.DOB:
